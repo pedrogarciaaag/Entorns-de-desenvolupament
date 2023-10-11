@@ -9,3 +9,4 @@ elif C>A and C>=B :
     print(C , "es mayor")
 elif A==C and A ==B :
     print("Son iguales")
+    
