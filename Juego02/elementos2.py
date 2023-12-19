@@ -12,9 +12,11 @@ class Nave(pygame.sprite.Sprite):
         
         self.indice_image = 0
         self.image = self.array_imagenes_rotadas_y_escaladas[self.indice_image]
-        self.contador_imagen = 0
         self.rect = self.image.get_rect()
         self.rect.topleft = posicion
+
+        # Inicializamos contador_imagen aquí
+        self.contador_imagen = 0
 
     #update
     def update(self, *args: Any, **kwargs: Any) -> None:
@@ -28,12 +30,17 @@ class Nave(pygame.sprite.Sprite):
             self.rect.x = min(pantalla.get_width()-self.image.get_width(), self.rect.x)
 
         #gestionamos animacion
-        self.contador_imagen = (self.contador_imagen+1)%40
+        self.contador_imagen = (self.contador_imagen+1) % 40
         self.indice_image = self.contador_imagen // 20
         old_center = self.rect.center
         self.image = self.array_imagenes_rotadas_y_escaladas[self.indice_image]
         self.rect = self.image.get_rect()
         self.rect.center = old_center
+
+    def disparar(self,grupo_sprites):
+        bala = Bala((self.rect.x + self.image.get_width() / 2,self.rect.y))  # Aquí está la corrección
+        grupo_sprites.add(bala)
+
 
 class Enemigo (pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
@@ -45,3 +52,26 @@ class Enemigo (pygame.sprite.Sprite):
     
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.rect.y +=1
+
+        pantalla = pygame.display.get_surface()
+        if(self.rect.y > pantalla.get_height()):
+            self.kill()
+
+class Fondo(pygame.sprite.Sprite):
+    def __init__(self) -> None:
+        super().__init__()
+        imagen = pygame.image.load("univer.png")  # Asegúrate de que el nombre del archivo y la extensión sean correctos
+        pantalla = pygame.display.get_surface()
+        self.image = pygame.transform.scale(imagen, (pantalla.get_width(), pantalla.get_height()))  # Asegúrate de escalar la imagen al tamaño de la pantalla
+        self.rect = self.image.get_rect()
+
+class Bala (pygame.sprite.Sprite):
+    def __init__(self, posicion) -> None:
+        super().__init__()
+        self.image = pygame.Surface((5,10))
+        self.image.fill((255,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.center = posicion
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        self.rect.y -= 5
