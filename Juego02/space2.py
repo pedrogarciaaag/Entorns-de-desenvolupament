@@ -1,6 +1,7 @@
 import pygame
 import elementos2
 import random
+from pygame.sprite import spritecollide
 
 #inicamos juego
 pygame.init()
@@ -22,11 +23,17 @@ fondo = elementos2.Fondo()
 nave = elementos2.Nave(posicion)  
 
 #crear grupo sprites
+grupo_sprites = pygame.sprite.Group(fondo, nave) 
 
-grupo_sprites = pygame.sprite.Group(fondo, nave)  # Añade las instancias al grupo de sprites
+#crear grupo de balas
+balas = pygame.sprite.Group()
+
+#crear grupo de enemigos
+enemigos = pygame.sprite.Group()
 
 enemigo = elementos2.Enemigo((50,50))
 grupo_sprites.add(enemigo)
+enemigos.add(enemigo)
 
 #varaible que alcance ultimo enemigo creado
 ultimo_enemigo_creado = 0
@@ -47,13 +54,25 @@ while running:
     if(momento_actual > ultimo_enemigo_creado + frecuencia_enemigo_creado):
         cordX = random.randint(0,pantalla.get_width())
         cordY = 0
-        grupo_sprites.add(elementos2.Enemigo((cordX, cordY)))  # Aquí está la corrección
+        enemigo = elementos2.Enemigo((cordX, cordY))  # Aquí está la corrección
+        grupo_sprites.add(enemigo)
+        enemigos.add(enemigo)
         ultimo_enemigo_creado = momento_actual
 
     #teclas
     teclas = pygame.key.get_pressed()
     if teclas[pygame.K_SPACE]:
-        nave.disparar(grupo_sprites)
+        bala = nave.disparar(grupo_sprites)
+        if bala is not None:  # Aseguramos que bala no es None antes de añadirla a balas
+            balas.add(bala)
+    
+    # Comprobamos si alguna bala ha colisionado con un enemigo
+    for bala in balas:
+        enemigos_golpeados = spritecollide(bala, enemigos, True)
+        # Si la bala golpea a un enemigo, la eliminamos
+        if enemigos_golpeados:
+            bala.kill()
+            
     #pintar
     #el color de la pantalla
     pantalla.fill((0,0,0))

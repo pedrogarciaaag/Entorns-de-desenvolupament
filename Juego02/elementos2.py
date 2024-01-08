@@ -18,6 +18,9 @@ class Nave(pygame.sprite.Sprite):
         # Inicializamos contador_imagen aquí
         self.contador_imagen = 0
 
+        # Inicializamos contador_disparo aquí
+        self.contador_disparo = 0
+
     #update
     def update(self, *args: Any, **kwargs: Any) -> None:
         teclas = args[0]
@@ -37,9 +40,17 @@ class Nave(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = old_center
 
+        # Incrementamos contador_disparo
+        self.contador_disparo += 1
+
     def disparar(self,grupo_sprites):
-        bala = Bala((self.rect.x + self.image.get_width() / 2,self.rect.y))  # Aquí está la corrección
-        grupo_sprites.add(bala)
+        # Solo disparamos si contador_disparo es mayor que un cierto valor
+        if self.contador_disparo > 25:
+            bala = Bala((self.rect.x + self.image.get_width() / 2,self.rect.y)) 
+            grupo_sprites.add(bala)
+            # Reiniciamos contador_disparo a 0 después de disparar
+            self.contador_disparo = 0
+            return bala  # Devolvemos la bala que acabamos de crear
 
 
 class Enemigo (pygame.sprite.Sprite):
@@ -52,7 +63,6 @@ class Enemigo (pygame.sprite.Sprite):
     
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.rect.y +=1
-
         pantalla = pygame.display.get_surface()
         if(self.rect.y > pantalla.get_height()):
             self.kill()
@@ -75,3 +85,6 @@ class Bala (pygame.sprite.Sprite):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.rect.y -= 5
+        # Añadimos una comprobación para eliminar la bala si sale de la pantalla
+        if self.rect.bottom < 0:
+            self.kill()
