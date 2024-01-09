@@ -1,87 +1,98 @@
 import pygame
 import elementos2
 import random
-from pygame.sprite import spritecollide
-
-#inicamos juego
+import pygame_menu
+#inicialicamos el juego
 pygame.init()
 
-#creamos pantalla
+#creamos la pantalla
 tamaño = (800,600)
 pantalla = pygame.display.set_mode(tamaño)
 
-#creamos reloj
+#creamos un reloj
 reloj = pygame.time.Clock()
-FPS = 60
+FPS =  60
 
-#booleano control
-running = True
-
-#crear nave
+#booleano de control
 posicion = (100,450)
-fondo = elementos2.Fondo()  
-nave = elementos2.Nave(posicion)  
+fondo = elementos2.Fondo()
+nave = elementos2.Nave(posicion)
+#crear un grupo de sprites
+#grupo_sprites = pygame.sprite.Group(fondo)
+#grupo_sprites.add(nave)
 
-#crear grupo sprites
-grupo_sprites = pygame.sprite.Group(fondo, nave) 
+#grupo_sprites.add(elementos2.Nave((400,200)))
+#grupo_sprites.add(elementos2.Nave((500,100)))
+#grupo_sprites.add(elementos2.Nave((100,300)))
 
-#crear grupo de balas
-balas = pygame.sprite.Group()
+grupo_sprites_todos = pygame.sprite.Group()
+grupo_sprites_enemigos = pygame.sprite.Group()
+grupo_sprites_bala = pygame.sprite.Group()
 
-#crear grupo de enemigos
-enemigos = pygame.sprite.Group()
+grupo_sprites_todos.add(fondo)
+grupo_sprites_todos.add(nave)
+#enemigo = elementos2.Enemigo((50,50))
+#grupo_sprites.add(elementos2.Enemigo((70, 70)))
 
-enemigo = elementos2.Enemigo((50,50))
-grupo_sprites.add(enemigo)
-enemigos.add(enemigo)
-
-#varaible que alcance ultimo enemigo creado
+#crear u na variable que almacene la última creacion de enemigo
 ultimo_enemigo_creado = 0
-frecuencia_enemigo_creado = 2000
+frecuencia_creacion_enemigo = 1500
 
-#bucle principal
-while running:
-    #limitamos el bucle al framerate definido
-    reloj.tick(FPS)
+def set_difficulty(value, difficulty):
+    # Do the job here !
+    pass
 
-    #gestionar salida
-    for event in pygame.event.get():
-        if event.type==pygame.QUIT:
-            running=False
+def start_the_game():
+    # Do the job here !
+    running = [True]
+    global ultimo_enemigo_creado
+    global frecuencia_creacion_enemigo
+    global FPS
+    global grupo_sprites_bala
+    global grupo_sprites_todos
+    global grupo_sprites_enemigos
+    global reloj
 
-    #creacion enemigos
-    momento_actual = pygame.time.get_ticks()
-    if(momento_actual > ultimo_enemigo_creado + frecuencia_enemigo_creado):
-        cordX = random.randint(0,pantalla.get_width())
-        cordY = 0
-        enemigo = elementos2.Enemigo((cordX, cordY))  # Aquí está la corrección
-        grupo_sprites.add(enemigo)
-        enemigos.add(enemigo)
-        ultimo_enemigo_creado = momento_actual
+    # bucle principal
+    while running[0]:
+        # Limitamos el bucle al framrate definido
+        reloj.tick(FPS)
+        # gestionar la salida
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = [False]
 
-    #teclas
-    teclas = pygame.key.get_pressed()
-    if teclas[pygame.K_SPACE]:
-        bala = nave.disparar(grupo_sprites)
-        if bala is not None:  # Aseguramos que bala no es None antes de añadirla a balas
-            balas.add(bala)
-    
-    # Comprobamos si alguna bala ha colisionado con un enemigo
-    for bala in balas:
-        enemigos_golpeados = spritecollide(bala, enemigos, True)
-        # Si la bala golpea a un enemigo, la eliminamos
-        if enemigos_golpeados:
-            bala.kill()
-            
-    #pintar
-    #el color de la pantalla
-    pantalla.fill((0,0,0))
-    #segundo los sprites
-    grupo_sprites.update(teclas)
-    grupo_sprites.draw(pantalla)
-    
-    #redibujar la pantalla
-    pygame.display.flip()
+        # creacion de enemigos
+        momento_actual = pygame.time.get_ticks()
+        if (momento_actual > ultimo_enemigo_creado + frecuencia_creacion_enemigo):
+            cordX = random.randint(0, pantalla.get_width())
+            cordY = 0
+            enemigo = elementos2.Enemigo((cordX, cordY))
+            grupo_sprites_todos.add(enemigo)
+            grupo_sprites_enemigos.add(enemigo)
+            ultimo_enemigo_creado = momento_actual
 
-#finalizamos juego
+        # capturamos las teclas
+        teclas = pygame.key.get_pressed()
+        if teclas[pygame.K_ESCAPE]:
+          running[0] = False
+
+        # pintaremos:
+        # pantalla.fill((255,255,255))
+        grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_bala, grupo_sprites_enemigos, running)
+        grupo_sprites_todos.draw(pantalla)
+
+        # redibujar la pantala
+        pygame.display.flip()
+    pass
+
+menu = pygame_menu.Menu('Welcome', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
+
+menu.add.text_input('Name :', default='John Doe')
+menu.add.selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
+menu.add.button('Play', start_the_game)
+menu.add.button('Quit', pygame_menu.events.EXIT)
+
+menu.mainloop(pantalla)
+#finalizamos el juego
 pygame.quit()
