@@ -6,7 +6,7 @@ class Nave (pygame.sprite.Sprite):
         super().__init__()
         #cargamos la imagen
         self.imagenes = [pygame.image.load("ovni1.png"), pygame.image.load("ovni2.png")]
-        self.imagenes2 = [pygame.transform.scale(self.imagenes[0], (70, 100)), pygame.transform.scale(self.imagenes[1], (70,100))]
+        self.imagenes2 = [pygame.transform.scale(self.imagenes[0], (100, 100)), pygame.transform.scale(self.imagenes[1], (100,100))]
         self.indice_imagen = 0
         self.image = self.imagenes2[self.indice_imagen]
         self.mask = pygame.mask.from_surface(self.image)
