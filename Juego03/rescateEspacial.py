@@ -1,11 +1,11 @@
 import pygame
-import elementos2
+import elementos
 import random
 import pygame_menu
 
 pygame.init()
 
-tamaño = (800,600)
+tamaño = (1366,868)
 pantalla = pygame.display.set_mode(tamaño)
 
 reloj = pygame.time.Clock()
@@ -13,9 +13,9 @@ FPS =  60
 
 font= pygame.font.Font(None,30)
 
-posicion = (350, 500)  
-fondo = elementos2.Fondo()
-nave = elementos2.Nave(posicion)
+posicion = (683, 424)  
+fondo = elementos.Fondo()
+nave = elementos.Nave(posicion)
 
 grupo_sprites_todos = pygame.sprite.Group()
 grupo_sprites_enemigos = pygame.sprite.Group()
@@ -38,8 +38,8 @@ def start_the_game():
     global FPS
     global reloj
 
-    posicion = (350, 500)
-    nave = elementos2.Nave(posicion)
+    posicion = (683, 424)
+    nave = elementos.Nave(posicion)
     
     grupo_sprites_todos = pygame.sprite.Group()
     grupo_sprites_enemigos = pygame.sprite.Group()
@@ -68,7 +68,7 @@ def start_the_game():
             if (momento_actual > ultimo_enemigo_creado + frecuencia_creacion_enemigo):
                 cordX = random.randint(0, pantalla.get_width())
                 cordY = 0
-                enemigo = elementos2.Enemigo((cordX, cordY))
+                enemigo = elementos.Enemigo((cordX, cordY))
                 grupo_sprites_todos.add(enemigo)
                 grupo_sprites_enemigos.add(enemigo)
                 ultimo_enemigo_creado = momento_actual
