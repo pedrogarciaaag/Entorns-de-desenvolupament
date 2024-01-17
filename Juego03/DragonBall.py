@@ -91,11 +91,16 @@ def start_the_game():
         if pausado:
             texto = font.render("PAUSADO",True,"Red")
             pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))  # Cambiado para centrar el texto "PAUSADO"
+        if not pausado:
+            puntuacion = font.render("Puntuacion:",True,"Purple")
+            pantalla.blit(puntuacion, (0, 10))
+            vidas = font.render("Vidas:",True,"Red")
+            pantalla.blit(vidas, (1200, 10))
         pygame.display.flip()
 
 menu = pygame_menu.Menu('DragonBall game', 400, 300, theme=pygame_menu.themes.THEME_ORANGE)
 
-menu.add.selector('Dificultad :', [('Difícil', 1000), ('Facil', 3000)], onchange=set_difficulty)
+menu.add.selector('Dificultad :', [('Facil', 3000),('Difícil', 1000)], onchange=set_difficulty)
 menu.add.button('Jugar', start_the_game)
 menu.add.button('Salir', pygame_menu.events.EXIT)
 
