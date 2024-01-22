@@ -24,11 +24,11 @@ grupo_sprites_comida = pygame.sprite.Group()
 grupo_sprites_todos.add(fondo)
 grupo_sprites_todos.add(nave)
 
-ultimo_enemigo_creado = 1500
+ultimo_enemigo_creado = 2000
 frecuencia_creacion_enemigo = 3000
 
 ultimo_comida_creado = 0
-frecuencia_creacion_comida = 3000
+frecuencia_creacion_comida = 3500
 
 def set_difficulty(value, difficulty):
     global frecuencia_creacion_enemigo
@@ -55,6 +55,9 @@ def start_the_game():
 
     pausado = False
 
+    vidas = elementos.Puntos()
+    puntuacion = elementos.Puntos()
+
     while running[0]:
         reloj.tick(FPS)
         for event in pygame.event.get():
@@ -68,7 +71,7 @@ def start_the_game():
             pausado = not pausado
 
         if not pausado:
-            grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_enemigos,grupo_sprites_comida, running)
+            grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_enemigos,grupo_sprites_comida, running, vidas,puntuacion)
             momento_actual = pygame.time.get_ticks()
             # enemigos
             if momento_actual > ultimo_enemigo_creado + frecuencia_creacion_enemigo:
@@ -90,12 +93,16 @@ def start_the_game():
         grupo_sprites_todos.draw(pantalla)
         if pausado:
             texto = font.render("PAUSADO",True,"Red")
-            pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))  # Cambiado para centrar el texto "PAUSADO"
+            pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
+            valor_puntuacion = font.render("Puntuacion:"+str(puntuacion.getpuntuacion()),True,"Purple")
+            pantalla.blit(valor_puntuacion, (0, 10))
+            valor_vidas = font.render("Vidas:"+vidas.getvidas(),True,"Red")
+            pantalla.blit(valor_vidas, (1200, 10))
         if not pausado:
-            puntuacion = font.render("Puntuacion:",True,"Purple")
-            pantalla.blit(puntuacion, (0, 10))
-            vidas = font.render("Vidas:",True,"Red")
-            pantalla.blit(vidas, (1200, 10))
+            valor_puntuacion = font.render("Puntuacion:" +str(puntuacion.getpuntuacion()),True,"Purple")
+            pantalla.blit(valor_puntuacion, (0, 10))
+            valor_vidas = font.render("Vidas:"+str(vidas.getvidas()),True,"Red")
+            pantalla.blit(valor_vidas, (1200, 10))
         pygame.display.flip()
 
 menu = pygame_menu.Menu('DragonBall game', 400, 300, theme=pygame_menu.themes.THEME_ORANGE)

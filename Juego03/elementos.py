@@ -13,6 +13,7 @@ class Nave(pygame.sprite.Sprite):
         self.rect.topleft = posicion
         self.ultimo_disparo = 0
         self.vidas = 3
+        self.puntuacion = 0
 
     #update
     def update(self, *args):
@@ -33,18 +34,38 @@ class Nave(pygame.sprite.Sprite):
         grupo_sprites_comida = args[3]
         #variable running
         running = args[4]
+        vidas = args[5]
+        puntuacion = args[6]
+
         #detectar colisiones
         enemigo_colision = pygame.sprite.spritecollideany(self, grupo_sprites_enemigos,pygame.sprite.collide_mask)
         if enemigo_colision:
             enemigo_colision.kill()
             self.vidas -=1
-            if self.vidas <= 0 :
+            vidas.restarvida()
+            if vidas.getvidas() <= 0 :
                 running[0] = False
         comida_colision = pygame.sprite.spritecollideany(self, grupo_sprites_comida,pygame.sprite.collide_mask)
         if comida_colision:
             comida_colision.kill()
+            self.puntuacion += 1
+            puntuacion.sumarpuntuacion()
             
+            
+class Puntos ():
+    def __init__(self) -> None:
+        self.puntuacion = 0
+        self.vidas = 3 
+        
+    def getvidas (self) :
+        return self.vidas
+    def restarvida(self):
+        self.vidas-=1
 
+    def getpuntuacion (self):
+        return self.puntuacion
+    def sumarpuntuacion(self):
+        self.puntuacion +=1
 #creador de enemigos
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
