@@ -11,7 +11,29 @@ pantalla = pygame.display.set_mode(tamaño)
 reloj = pygame.time.Clock()
 FPS =  60
 
-font= pygame.font.Font(None,30)
+font= pygame.font.Font(pygame_menu.font.FONT_8BIT,20)
+
+myimage = pygame_menu.baseimage.BaseImage(
+    image_path="menu.png",
+    drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
+)
+
+# Crea el tema
+tema = pygame_menu.themes.Theme(
+    background_color=myimage, 
+    title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE,
+    title_background_color=(255, 128, 0),
+    title_font_shadow=True,
+    title_font=pygame_menu.font.FONT_8BIT,
+    title_font_size=50,
+    widget_padding=35,
+    widget_font=pygame_menu.font.FONT_8BIT,
+    widget_font_size=35,
+    widget_font_color = (255, 255, 255),
+)
+
+icono = pygame.image.load("icono.png")
+pygame.display.set_icon(icono)
 
 posicion = (683, 424)  
 fondo = elementos.Fondo()
@@ -94,20 +116,21 @@ def start_the_game():
         if pausado:
             texto = font.render("PAUSADO",True,"Red")
             pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
-            valor_puntuacion = font.render("Puntuacion:"+str(puntuacion.getpuntuacion()),True,"Purple")
+            valor_puntuacion = font.render("Puntuacion "+str(puntuacion.getpuntuacion()),True,"Purple")
             pantalla.blit(valor_puntuacion, (0, 10))
-            valor_vidas = font.render("Vidas:"+vidas.getvidas(),True,"Red")
+            valor_vidas = font.render("Vidas "+vidas.getvidas(),True,"Red")
             pantalla.blit(valor_vidas, (1200, 10))
         if not pausado:
-            valor_puntuacion = font.render("Puntuacion:" +str(puntuacion.getpuntuacion()),True,"Purple")
+            valor_puntuacion = font.render("Puntuacion " +str(puntuacion.getpuntuacion()),True,"Orange")
             pantalla.blit(valor_puntuacion, (0, 10))
-            valor_vidas = font.render("Vidas:"+str(vidas.getvidas()),True,"Red")
+            valor_vidas = font.render("Vidas "+str(vidas.getvidas()),True,"Red")
             pantalla.blit(valor_vidas, (1200, 10))
         pygame.display.flip()
 
-menu = pygame_menu.Menu('DragonBall game', 400, 300, theme=pygame_menu.themes.THEME_ORANGE)
 
-menu.add.selector('Dificultad :', [('Facil', 3000),('Difícil', 1000)], onchange=set_difficulty)
+menu = pygame_menu.Menu('DragonBall Game', 1366,768, theme=tema)
+
+menu.add.selector('Dificultad ', [('Facil', 3000),('Dificil', 1000)], onchange=set_difficulty)
 menu.add.button('Jugar', start_the_game)
 menu.add.button('Salir', pygame_menu.events.EXIT)
 
