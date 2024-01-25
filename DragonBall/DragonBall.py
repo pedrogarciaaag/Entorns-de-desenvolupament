@@ -35,7 +35,7 @@ tema = pygame_menu.themes.Theme(
 icono = pygame.image.load("icono.png")
 pygame.display.set_icon(icono)
 
-posicion = (683, 424)  
+posicion = (683, 124)  
 fondo = elementos.Fondo()
 nave = elementos.Nave(posicion)
 

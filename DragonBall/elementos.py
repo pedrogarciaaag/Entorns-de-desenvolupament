@@ -6,6 +6,8 @@ class Nave(pygame.sprite.Sprite):
         # Cargamos las imágenes
         self.imagenes_derecha = [pygame.image.load("goku_derecha.png")]
         self.imagenes_izquierda = [pygame.image.load("goku_izquierda.png")]
+        self.imagenes_arriba_derecha = [pygame.image.load("goku_derecha.png")]
+        self.imagenes_abajo_izquierda = [pygame.image.load("goku_izquierda.png")]
         self.imagenes = self.imagenes_derecha  
         self.indice_imagen = 0
         self.image = self.imagenes[self.indice_imagen]
@@ -26,6 +28,15 @@ class Nave(pygame.sprite.Sprite):
             self.rect.x += 2
             self.rect.x = min(pygame.display.get_surface().get_width() - self.image.get_width(), self.rect.x)
             self.imagenes = self.imagenes_derecha 
+        elif teclas [pygame.K_UP]:
+            self.rect.y -= 2
+            self.rect.x = max(0, self.rect.x)
+            self.imagenes = self.imagenes_arriba_derecha 
+        elif teclas [pygame.K_DOWN]:
+            self.rect.y +=2
+            self.rect.x = min(pygame.display.get_surface().get_width() - self.image.get_width(), self.rect.x)
+            self.imagenes = self.imagenes_abajo_izquierda 
+
 
         self.indice_imagen = (self.indice_imagen + 1) % len(self.imagenes)
         self.image = self.imagenes[self.indice_imagen]
@@ -41,14 +52,12 @@ class Nave(pygame.sprite.Sprite):
         enemigo_colision = pygame.sprite.spritecollideany(self, grupo_sprites_enemigos,pygame.sprite.collide_mask)
         if enemigo_colision:
             enemigo_colision.kill()
-            self.vidas -=1
             vidas.restarvida()
             if vidas.getvidas() <= 0 :
                 running[0] = False
         comida_colision = pygame.sprite.spritecollideany(self, grupo_sprites_comida,pygame.sprite.collide_mask)
         if comida_colision:
             comida_colision.kill()
-            self.puntuacion += 1
             puntuacion.sumarpuntuacion()
             
             
@@ -71,9 +80,9 @@ class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
         #cargamos la imagen
-        imagen = pygame.image.load("aguja.png")
+        imagen = pygame.image.load("demonio.png")
         imagen2 = pygame.transform.scale(imagen, (150, 150))
-        self.image = pygame.transform.rotate(imagen2, 180)
+        self.image = pygame.transform.rotate(imagen2, 0)
         self.mask = pygame.mask.from_surface(self.image)
         #creamos un rectangulo a partir de la imagen
         self.rect = self.image.get_rect()
