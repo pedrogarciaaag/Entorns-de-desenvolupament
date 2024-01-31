@@ -14,7 +14,7 @@ FPS =  60
 font= pygame.font.Font(pygame_menu.font.FONT_8BIT,20)
 
 myimage = pygame_menu.baseimage.BaseImage(
-    image_path="menu.png",
+    image_path="Imagenes/menu.png",
     drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
 )
 
@@ -32,7 +32,7 @@ tema = pygame_menu.themes.Theme(
     widget_font_color = (255, 255, 255),
 )
 
-icono = pygame.image.load("icono.png")
+icono = pygame.image.load("Imagenes/icono.png")
 pygame.display.set_icon(icono)
 
 posicion = (683, 124)  
@@ -118,7 +118,7 @@ def start_the_game():
             pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
             valor_puntuacion = font.render("Puntuacion "+str(puntuacion.getpuntuacion()),True,"Purple")
             pantalla.blit(valor_puntuacion, (0, 10))
-            valor_vidas = font.render("Vidas "+vidas.getvidas(),True,"Red")
+            valor_vidas = (pygame.image.load("prueba.png") + font.render("Vidas "+str(vidas.getvidas()),True,"Red"))
             pantalla.blit(valor_vidas, (1200, 10))
         if not pausado:
             valor_puntuacion = font.render("Puntuacion " +str(puntuacion.getpuntuacion()),True,"Orange")
@@ -126,7 +126,7 @@ def start_the_game():
             valor_vidas = font.render("Vidas "+str(vidas.getvidas()),True,"Red")
             pantalla.blit(valor_vidas, (1200, 10))
         pygame.display.flip()
-
+            
 
 menu = pygame_menu.Menu('DragonBall Game', 1366,768, theme=tema)
 

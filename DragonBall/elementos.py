@@ -4,10 +4,8 @@ class Nave(pygame.sprite.Sprite):
     def __init__(self, posicion):
         super().__init__()
         # Cargamos las imágenes
-        self.imagenes_derecha = [pygame.image.load("goku_derecha.png")]
-        self.imagenes_izquierda = [pygame.image.load("goku_izquierda.png")]
-        self.imagenes_arriba_derecha = [pygame.image.load("goku_derecha.png")]
-        self.imagenes_abajo_izquierda = [pygame.image.load("goku_izquierda.png")]
+        self.imagenes_derecha = [pygame.image.load("Imagenes/goku_derecha.png")]
+        self.imagenes_izquierda = [pygame.image.load("Imagenes/goku_izquierda.png")]
         self.imagenes = self.imagenes_derecha  
         self.indice_imagen = 0
         self.image = self.imagenes[self.indice_imagen]
@@ -28,15 +26,14 @@ class Nave(pygame.sprite.Sprite):
             self.rect.x += 2
             self.rect.x = min(pygame.display.get_surface().get_width() - self.image.get_width(), self.rect.x)
             self.imagenes = self.imagenes_derecha 
-        elif teclas [pygame.K_UP]:
+        if teclas [pygame.K_UP]:
             self.rect.y -= 2
-            self.rect.x = max(0, self.rect.x)
-            self.imagenes = self.imagenes_arriba_derecha 
+            self.rect.y = max(0, self.rect.y)
+            self.imagenes =  self.imagenes_derecha 
         elif teclas [pygame.K_DOWN]:
             self.rect.y +=2
-            self.rect.x = min(pygame.display.get_surface().get_width() - self.image.get_width(), self.rect.x)
-            self.imagenes = self.imagenes_abajo_izquierda 
-
+            self.rect.y = min(pygame.display.get_surface().get_height() - self.image.get_height(), self.rect.y)
+            self.imagenes =  self.imagenes_derecha
 
         self.indice_imagen = (self.indice_imagen + 1) % len(self.imagenes)
         self.image = self.imagenes[self.indice_imagen]
@@ -80,8 +77,8 @@ class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
         #cargamos la imagen
-        imagen = pygame.image.load("demonio.png")
-        imagen2 = pygame.transform.scale(imagen, (150, 150))
+        imagen = pygame.image.load("Imagenes/demonio.png")
+        imagen2 = pygame.transform.scale(imagen, (120, 120))
         self.image = pygame.transform.rotate(imagen2, 0)
         self.mask = pygame.mask.from_surface(self.image)
         #creamos un rectangulo a partir de la imagen
@@ -100,7 +97,7 @@ class Enemigo(pygame.sprite.Sprite):
 class Comida(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
-        imagen_comida = pygame.image.load("comida.png")
+        imagen_comida = pygame.image.load("Imagenes/comida.png")
         imagen2_comida = pygame.transform.scale(imagen_comida,(100,100))
         self.image = pygame.transform.rotate(imagen2_comida, 0)
         self.mask = pygame.mask.from_surface(self.image)
@@ -122,7 +119,7 @@ class Fondo(pygame.sprite.Sprite):
     def __init__(self) -> None:
         super().__init__()
         # cargamos la imagen
-        imagen = pygame.image.load("fondo1.png")
+        imagen = pygame.image.load("Imagenes/fondo1.png")
         #pantalla
         pantalla = pygame.display.get_surface()
         self.image = pygame.transform.scale(imagen, (pantalla.get_width(), imagen.get_height()))
