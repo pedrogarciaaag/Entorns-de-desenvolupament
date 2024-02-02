@@ -4,23 +4,38 @@ import pygame_menu
 
 pygame.init()
 
-#Pantalla y su tamaño
+#Creamos pantalla y su tamaño
 pantalla = pygame.display.set_mode((1366,768))
 
-personaje = elementos1.Jugador()
+#Cargamos personaje
+posicion=(100 ,350)
+personaje = elementos1.Jugador(posicion)
 
 #Cargamos el fondo
-fondo = pygame.image.load("..\\Imagenes\\fondo1.png")
+fondo = elementos1.Fondo()
 
+#creamos grupo de sprites 
+grupo_sprites_todos = pygame.sprite.Group()
+#añadimos al grupo de sprites el personaje y fondo
+grupo_sprites_todos.add(fondo)
+grupo_sprites_todos.add(personaje)
+
+#creamos un reloj 
 reloj = pygame.time.Clock()
 
 def start_the_game ():
     running = [True]
     global reloj
 
+    posicion=(100 ,350)
+    personaje = elementos1.Jugador(posicion)
+
+    grupo_sprites_todos = pygame.sprite.Group()
+    grupo_sprites_todos.add(fondo)
+    grupo_sprites_todos.add(personaje)
+
     while running [0]:
         reloj.tick(90)
-        personaje.update()
         # pygame.QUIT event means the user clicked X to close your window
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -30,9 +45,8 @@ def start_the_game ():
         if teclas[pygame.K_ESCAPE]:
           running[0] = False
 
-        # fill the screen with a color to wipe away anything from last frame
-        pantalla.blit(fondo,(0,0))
-        pantalla.blit(personaje.image,personaje.rect)
+        personaje.update()
+        grupo_sprites_todos.draw(pantalla)
 
         # RENDER YOUR GAME HERE
 
