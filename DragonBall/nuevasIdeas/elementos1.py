@@ -12,9 +12,24 @@ class Jugador (pygame.sprite.Sprite):
         self.image_kame = pygame.image.load("kidkame.png")
         self.rect = self.image.get_rect()
         self.rect.topleft = posicion
+        self.ultimo_disparo = 0
+
+    def disparar(self, grupo_sprites_todos, grupo_sprites_bala):
+        momento_actual = pygame.time.get_ticks()
+        if momento_actual > self.ultimo_disparo + 500:
+            bala = Kamehameha((self.rect.x + self.image.get_width() / 2, self.rect.y + self.image.get_width() / 2))
+            grupo_sprites_bala.add(bala)
+            grupo_sprites_todos.add(bala)
+            self.ultimo_disparo = momento_actual
 
     def update(self, *args):
-        teclas = pygame.key.get_pressed()
+        #capturamos teclas
+        teclas = args[0]
+        #capturamos todos
+        grupo_sprites_todos = args[1]
+        #capturamos balas
+        grupo_sprites_bala = args[2]
+        grupo_sprites_esfera = args[3]
 
         if teclas[pygame.K_UP]:
             self.image = self.image_arriba
@@ -38,20 +53,42 @@ class Jugador (pygame.sprite.Sprite):
         
         if teclas[pygame.K_SPACE]:
             self.image = self.image_kame
+            self.disparar(grupo_sprites_todos, grupo_sprites_bala)
 
         if not any(teclas):
             self.image = self.image_normal
 
-# class Kamehameha (pygame.sprite.Sprite):
-#     def __init__(self) -> None:
-#         self.image = pygame.image.load("kame.png")
-#         self.rect = self.image.get_rect()
+class Kamehameha(pygame.sprite.Sprite):
+    def __init__(self, posicion) -> None:
+        super().__init__()
+        self.image = pygame.image.load("kame1.png")
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        self.rect.center = posicion
 
-#     def update(self) -> None:
-#         teclas = pygame.key.get_pressed()
-#         if teclas[pygame.K_SPACE]:
-#                 self.rect.x = (self.rect.x + 5)
-#                 self.rect.y = (self.rect.y + 0)
+    def update(self, *args: any, **kwargs: any) -> None:
+        self.rect.x +=5
+        if self.rect.bottom < 0:
+            self.kill()
+
+class Esferas(pygame.sprite.Sprite):
+    def __init__(self, posicion) -> None:
+        super().__init__()
+        self.image = pygame.image.load("esfera.png")
+        self.mask = pygame.mask.from_surface(self.image)
+        #creamos un rectangulo a partir de la imagen
+        self.rect = self.image.get_rect()
+        #actualizar la posición del rectangulo para que coincida con "posicion"
+        self.rect.topleft = posicion
+        self.tiempo_inicial = pygame.time.get_ticks()
+
+    def update(self, *args: any, **kwargs: any):
+        pantalla = pygame.display.get_surface()
+        self.rect.x = max(0, self.rect.x)
+        self.rect.x = min(pantalla.get_width() - self.image.get_width(), self.rect.x)
+        if (self.rect.y > pantalla.get_height()):
+            self.kill()
+
 
 class Fondo(pygame.sprite.Sprite):
     def __init__(self) -> None:
