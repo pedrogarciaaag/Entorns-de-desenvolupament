@@ -23,6 +23,7 @@ font= pygame.font.Font(pygame_menu.font.FONT_8BIT,20)
 
 def set_difficulty(value, difficulty):
     global velocidad
+    
     velocidad = difficulty
 
 def start_the_game ():
@@ -56,6 +57,7 @@ def start_the_game ():
     pausado = False
 
     puntuacion_esferas = elementos1.Puntos()
+    vidas_picolo = elementos1.Puntos()
 
     #bucle princiapl
     while running [0]:
@@ -74,7 +76,7 @@ def start_the_game ():
 
         if not pausado:
             #update funcion principal
-            grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_kame,grupo_sprites_esfera,grupo_sprites_picolo,puntuacion_esferas)
+            grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_kame,grupo_sprites_esfera,grupo_sprites_picolo,puntuacion_esferas,vidas_picolo,running)
             #obtenemos los ticks del juego para la creacion de esferas
             momento_actual = pygame.time.get_ticks()
             # creacion de esferas
@@ -94,14 +96,22 @@ def start_the_game ():
             pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
 
         if not pausado : 
-            valor_puntuacion = font.render("Puntuacion " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
-            pantalla.blit(valor_puntuacion, (300, 10))
+            valor_puntuacion = font.render("Esferas del dragon " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
+            pantalla.blit(valor_puntuacion, (250, 70))
+
         #icono de goku arriba izquierda
         goku_icono = pygame.image.load("Imagenes/goku_icono.png")
         pantalla.blit(goku_icono, (0, 0))
         #icono de picolo arriba derecha
         picolo_icono  = pygame.image.load("Imagenes/picolo_icono.png")
         pantalla.blit(picolo_icono,(1280,0))
+
+        #si las vidas de picolo llegan a 0 el jugador gana 
+        if vidas_picolo.getvidas() == 0:
+            hasganado = pygame.image.load("Imagenes/hasganado.png")
+            pantalla.blit(hasganado,(330,120))
+            pygame.display.flip()
+            pygame.time.wait(4000)  
 
         pygame.display.flip()
 

@@ -37,8 +37,11 @@ class Jugador (pygame.sprite.Sprite):
         grupo_sprites_kame = args[2]
         #capturamos esferas
         grupo_sprites_esfera = args[3]
+        #
+        grupo_sprites_picolo = args[4]
         #capturamos puntuacion esferas
         puntuacion = args[5]
+        #
 
         if teclas[pygame.K_UP]:
             self.image = self.imagenes[1]
@@ -73,15 +76,6 @@ class Jugador (pygame.sprite.Sprite):
             esfera_colison.kill()
             puntuacion.sumarpuntuacion()
 
-class Puntos ():
-    def __init__(self) -> None:
-        self.puntuacion = 0
-
-    def getpuntuacion (self):
-        return self.puntuacion
-    def sumarpuntuacion(self):
-        self.puntuacion +=1
-
 class Kamehameha(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
@@ -95,13 +89,6 @@ class Kamehameha(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
         
-        #colison con picolo
-        grupo_sprites_picolo =args[4]
-        picolo_colision = pygame.sprite.spritecollideany(self,grupo_sprites_picolo,pygame.sprite.collide_mask)
-        if picolo_colision:
-            self.kill()
-            picolo_colision.kill()
-
 class Picolo (pygame.sprite.Sprite):
     def __init__(self,posicion,velocidad) -> None:
         super().__init__()
@@ -118,7 +105,17 @@ class Picolo (pygame.sprite.Sprite):
         elif self.rect.y > pantalla.get_height() - self.image.get_height():
             self.velocidad = -self.velocidad
 
-
+        #colision de picolo con la bala
+        grupo_sprites_kame = args[2]
+        vidas = args[6]
+        running = args[7]
+        colision = pygame.sprite.spritecollideany(self,grupo_sprites_kame,pygame.sprite.collide_mask)
+        if colision:
+            colision.kill()
+            vidas.restarvida()
+            if vidas.getvidas() <= 0 :
+                running[0] = False
+                
 class Esferas(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
@@ -151,3 +148,18 @@ class Fondo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         # actualizar la posición del rectangulo para que coincida con "posicion"
         self.rect.topleft = (0, 0)
+
+class Puntos ():
+    def __init__(self) -> None:
+        self.puntuacion = 0
+        self.vidas = 1 
+        
+    def getvidas (self) :
+        return self.vidas
+    def restarvida(self):
+        self.vidas-=1
+
+    def getpuntuacion (self):
+        return self.puntuacion
+    def sumarpuntuacion(self):
+        self.puntuacion +=1
