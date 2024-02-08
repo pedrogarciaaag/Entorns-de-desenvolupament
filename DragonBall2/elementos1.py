@@ -17,6 +17,7 @@ class Jugador (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = posicion
         self.ultimo_disparo = 0
+        self.puntuacion = 0
 
     #funcion para que jugador dispare kame
     def disparar(self, grupo_sprites_todos, grupo_sprites_kame):
@@ -36,8 +37,8 @@ class Jugador (pygame.sprite.Sprite):
         grupo_sprites_kame = args[2]
         #capturamos esferas
         grupo_sprites_esfera = args[3]
-
-        grupo_sprites_picolo = args[4]
+        #capturamos puntuacion esferas
+        puntuacion = args[5]
 
         if teclas[pygame.K_UP]:
             self.image = self.imagenes[1]
@@ -65,11 +66,21 @@ class Jugador (pygame.sprite.Sprite):
 
         if not any(teclas):
             self.image = self.imagenes[0]
-    
-        #colisiones
+
+        #colisiones esferas
         esfera_colison  = pygame.sprite.spritecollideany(self,grupo_sprites_esfera,pygame.sprite.collide_mask)
         if esfera_colison : 
             esfera_colison.kill()
+            puntuacion.sumarpuntuacion()
+
+class Puntos ():
+    def __init__(self) -> None:
+        self.puntuacion = 0
+
+    def getpuntuacion (self):
+        return self.puntuacion
+    def sumarpuntuacion(self):
+        self.puntuacion +=1
 
 class Kamehameha(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
@@ -83,14 +94,21 @@ class Kamehameha(pygame.sprite.Sprite):
         self.rect.x +=5
         if self.rect.bottom < 0:
             self.kill()
+        
+        #colison con picolo
+        grupo_sprites_picolo =args[4]
+        picolo_colision = pygame.sprite.spritecollideany(self,grupo_sprites_picolo,pygame.sprite.collide_mask)
+        if picolo_colision:
+            self.kill()
+            picolo_colision.kill()
 
 class Picolo (pygame.sprite.Sprite):
-    def __init__(self,posicion) -> None:
+    def __init__(self,posicion,velocidad) -> None:
         super().__init__()
         self.image = pygame.image.load("Imagenes/picolo.png")
         self.rect = self.image.get_rect()
         self.rect.center = posicion
-        self.velocidad = 3
+        self.velocidad = velocidad
 
     def update(self, *args: any, **kwargs: any):
         pantalla = pygame.display.get_surface()

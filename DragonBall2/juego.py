@@ -11,11 +11,15 @@ pantalla = pygame.display.set_mode((1366,768))
 
 #creamos la frecuencia de creacion de esferas
 ultimo_esferas_creado = 0
-frecuencia_creacion_esferas = 30000
+frecuencia_creacion_esferas = 3000
 
+#velocidad para picolo
 velocidad = 3
 #creamos un reloj 
 reloj = pygame.time.Clock()
+
+#Fuente letras 
+font= pygame.font.Font(pygame_menu.font.FONT_8BIT,20)
 
 def set_difficulty(value, difficulty):
     global velocidad
@@ -32,8 +36,8 @@ def start_the_game ():
 
     #Cargamos el fondo
     fondo = elementos1.Fondo()
-
-    picolo = elementos1.Picolo((1200,500))
+    #cargamos picolo, su posicon y su velocidad inicial
+    picolo = elementos1.Picolo((1200,500),velocidad)
 
     #creamos grupo de sprites de todo
     grupo_sprites_todos = pygame.sprite.Group()
@@ -49,6 +53,10 @@ def start_the_game ():
     grupo_sprites_todos.add(picolo)
     grupo_sprites_picolo.add(picolo)
 
+    pausado = False
+
+    puntuacion_esferas = elementos1.Puntos()
+
     #bucle princiapl
     while running [0]:
         reloj.tick(90)
@@ -61,23 +69,33 @@ def start_the_game ():
         teclas = pygame.key.get_pressed()
         if teclas[pygame.K_ESCAPE]:
           running[0] = False
+        if teclas[pygame.K_b]:
+            pausado = not pausado
 
-        #update funcion principal
-        grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_kame,grupo_sprites_esfera,grupo_sprites_picolo)
-        #obtenemos los ticks del juego para la creacion de esferas
-        momento_actual = pygame.time.get_ticks()
-        # creacion de esferas
-        if momento_actual > ultimo_esferas_creado + frecuencia_creacion_esferas:
-                cordX = random.randint(0,pantalla.get_width())
-                cordY = random.randint(0,pantalla.get_height())
-                esfera = elementos1.Esferas((cordX, cordY))
-                grupo_sprites_todos.add(esfera)
-                grupo_sprites_esfera.add(esfera)
-                ultimo_esferas_creado = momento_actual
+        if not pausado:
+            #update funcion principal
+            grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_kame,grupo_sprites_esfera,grupo_sprites_picolo,puntuacion_esferas)
+            #obtenemos los ticks del juego para la creacion de esferas
+            momento_actual = pygame.time.get_ticks()
+            # creacion de esferas
+            if momento_actual > ultimo_esferas_creado + frecuencia_creacion_esferas:
+                    #cordenadas X de aparcicion esferas(no sobrepasan a picolo)
+                    cordX = random.randint(0,1200)
+                    cordY = random.randint(0,pantalla.get_height())
+                    esfera = elementos1.Esferas((cordX, cordY))
+                    grupo_sprites_todos.add(esfera)
+                    grupo_sprites_esfera.add(esfera)
+                    ultimo_esferas_creado = momento_actual
 
         #pintamos todo los sprites en la pantalla
         grupo_sprites_todos.draw(pantalla)
+        if pausado:
+            texto = font.render("PAUSADO",True,"White")
+            pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
 
+        if not pausado : 
+            valor_puntuacion = font.render("Puntuacion " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
+            pantalla.blit(valor_puntuacion, (300, 10))
         #icono de goku arriba izquierda
         goku_icono = pygame.image.load("Imagenes/goku_icono.png")
         pantalla.blit(goku_icono, (0, 0))
@@ -86,10 +104,6 @@ def start_the_game ():
         pantalla.blit(picolo_icono,(1280,0))
 
         pygame.display.flip()
-
-
-#Fuente letras menu
-font= pygame.font.Font(pygame_menu.font.FONT_8BIT,20)
 
 #Imagen fondo menu
 myimage = pygame_menu.baseimage.BaseImage(
@@ -113,6 +127,7 @@ tema = pygame_menu.themes.Theme(
 #creacion del menu
 menu = pygame_menu.Menu('DragonBall Game', 1366,768, theme=tema)
 
+menu.add.selector('Dificultad ', [('Facil', 3),('Dificil', 8)], onchange=set_difficulty)
 menu.add.button('Jugar', start_the_game)
 menu.add.button('Salir', pygame_menu.events.EXIT)
 
