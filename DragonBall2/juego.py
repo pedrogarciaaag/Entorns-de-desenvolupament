@@ -13,6 +13,10 @@ pantalla = pygame.display.set_mode((1366,768))
 ultimo_esferas_creado = 0
 frecuencia_creacion_esferas = 3000
 
+#creacion la creacion de enemigos
+ultimo_enemigo_creado = 0
+frecuencia_creacion_enemigo = 3000
+
 #velocidad para picolo
 velocidad = 3
 #creamos un reloj 
@@ -22,21 +26,25 @@ reloj = pygame.time.Clock()
 font= pygame.font.Font(pygame_menu.font.FONT_8BIT,20)
 
 def set_difficulty(value, difficulty):
+    global frecuencia_creacion_enemigo
     global velocidad
-    
-    velocidad = difficulty
+    frecuencia_creacion_enemigo = difficulty
 
 def start_the_game ():
     running = [True]
     global reloj
     global ultimo_esferas_creado
     global frecuencia_creacion_esferas
+    global ultimo_enemigo_creado
+    global frecuencia_creacion_enemigo
+
     #Cargamos personaje y su posicion
     posicion=(100 ,350)
     personaje = elementos1.Jugador(posicion)
 
     #Cargamos el fondo
     fondo = elementos1.Fondo()
+
     #cargamos picolo, su posicon y su velocidad inicial
     picolo = elementos1.Picolo((1200,500),velocidad)
 
@@ -48,16 +56,20 @@ def start_the_game ():
     grupo_sprites_esfera = pygame.sprite.Group()
     #creamos grupo de sprites de picolo
     grupo_sprites_picolo = pygame.sprite.Group()
+    #creamos grupo sprites enemigos
+    grupo_sprites_enemigos = pygame.sprite.Group()
 
     grupo_sprites_todos.add(fondo)
     grupo_sprites_todos.add(personaje)
     grupo_sprites_todos.add(picolo)
+
     grupo_sprites_picolo.add(picolo)
 
     pausado = False
 
     puntuacion_esferas = elementos1.Puntos()
     vidas_picolo = elementos1.Puntos()
+    vidas_jugador = elementos1.Puntos()
 
     #bucle princiapl
     while running [0]:
@@ -76,9 +88,10 @@ def start_the_game ():
 
         if not pausado:
             #update funcion principal
-            grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_kame,grupo_sprites_esfera,grupo_sprites_picolo,puntuacion_esferas,vidas_picolo,running)
+            grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_kame,grupo_sprites_esfera,grupo_sprites_picolo,puntuacion_esferas,vidas_picolo,running,grupo_sprites_enemigos,vidas_jugador)
             #obtenemos los ticks del juego para la creacion de esferas
             momento_actual = pygame.time.get_ticks()
+            
             # creacion de esferas
             if momento_actual > ultimo_esferas_creado + frecuencia_creacion_esferas:
                     #cordenadas X de aparcicion esferas(no sobrepasan a picolo)
@@ -89,29 +102,45 @@ def start_the_game ():
                     grupo_sprites_esfera.add(esfera)
                     ultimo_esferas_creado = momento_actual
 
+            if momento_actual > ultimo_enemigo_creado + frecuencia_creacion_enemigo:
+                cordX = 1366
+                cordY = random.randint(0,pantalla.get_height())
+                enemigo = elementos1.Enemigos((cordX, cordY))
+                grupo_sprites_todos.add(enemigo)
+                grupo_sprites_enemigos.add(enemigo)
+                ultimo_enemigo_creado = momento_actual
+
         #pintamos todo los sprites en la pantalla
         grupo_sprites_todos.draw(pantalla)
         if pausado:
             texto = font.render("PAUSADO",True,"White")
             pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
-
-        if not pausado : 
             valor_puntuacion = font.render("Esferas del dragon " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
             pantalla.blit(valor_puntuacion, (250, 70))
 
-        #icono de goku arriba izquierda
-        goku_icono = pygame.image.load("Imagenes/goku_icono.png")
-        pantalla.blit(goku_icono, (0, 0))
-        #icono de picolo arriba derecha
-        picolo_icono  = pygame.image.load("Imagenes/picolo_icono.png")
-        pantalla.blit(picolo_icono,(1280,0))
+        #if not pausado : 
+        #     valor_puntuacion = font.render("Esferas del dragon " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
+        #     pantalla.blit(valor_puntuacion, (250, 70))
+
+        # #icono de goku arriba izquierda
+        # goku_icono = pygame.image.load("Imagenes/goku_icono.png")
+        # pantalla.blit(goku_icono, (0, 0))
+        # #icono de picolo arriba derecha
+        # picolo_icono  = pygame.image.load("Imagenes/picolo_icono.png")
+        # pantalla.blit(picolo_icono,(1280,0))
 
         #si las vidas de picolo llegan a 0 el jugador gana 
-        if vidas_picolo.getvidas() == 0:
+        if vidas_picolo.getvidas_picolo() == 0:
             hasganado = pygame.image.load("Imagenes/hasganado.png")
             pantalla.blit(hasganado,(330,120))
             pygame.display.flip()
-            pygame.time.wait(4000)  
+            pygame.time.wait(3000)
+
+        if vidas_jugador.getvidas_jugador() == 0:
+            hasperdido = pygame.image.load("Imagenes/hasperdido.png")
+            pantalla.blit(hasperdido,(330,120))
+            pygame.display.flip()
+            pygame.time.wait(3000)
 
         pygame.display.flip()
 
@@ -137,7 +166,7 @@ tema = pygame_menu.themes.Theme(
 #creacion del menu
 menu = pygame_menu.Menu('DragonBall Game', 1366,768, theme=tema)
 
-menu.add.selector('Dificultad ', [('Facil', 3),('Dificil', 8)], onchange=set_difficulty)
+menu.add.selector('Dificultad ', [('Facil', float('inf') ),('Dificil', 3000)], onchange=set_difficulty)
 menu.add.button('Jugar', start_the_game)
 menu.add.button('Salir', pygame_menu.events.EXIT)
 

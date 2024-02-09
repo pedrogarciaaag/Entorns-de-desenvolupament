@@ -37,11 +37,12 @@ class Jugador (pygame.sprite.Sprite):
         grupo_sprites_kame = args[2]
         #capturamos esferas
         grupo_sprites_esfera = args[3]
-        #
-        grupo_sprites_picolo = args[4]
         #capturamos puntuacion esferas
         puntuacion = args[5]
-        #
+        #running
+        running = args[7]
+        #vidas jugador
+        vidas_jugador = args[9]
 
         if teclas[pygame.K_UP]:
             self.image = self.imagenes[1]
@@ -76,6 +77,15 @@ class Jugador (pygame.sprite.Sprite):
             esfera_colison.kill()
             puntuacion.sumarpuntuacion()
 
+        grupo_sprites_enemigos = args[8]
+        enemigos_colison= pygame.sprite.spritecollideany(self,grupo_sprites_enemigos,pygame.sprite.collide_mask)
+        if enemigos_colison:
+            enemigos_colison.kill()
+            vidas_jugador.restarvidas_jugador()
+            if vidas_jugador.getvidas_picolo() == 0 :
+                running[0] = False
+        
+
 class Kamehameha(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
@@ -88,11 +98,17 @@ class Kamehameha(pygame.sprite.Sprite):
         self.rect.x +=5
         if self.rect.bottom < 0:
             self.kill()
+
+        grupo_sprites_enemigos = args[8]
+        enemigos_colison= pygame.sprite.spritecollideany(self,grupo_sprites_enemigos,pygame.sprite.collide_mask)
+        if enemigos_colison:
+            enemigos_colison.kill()
+            self.kill()
         
 class Picolo (pygame.sprite.Sprite):
     def __init__(self,posicion,velocidad) -> None:
         super().__init__()
-        self.image = pygame.image.load("Imagenes/picolo.png")
+        self.image = pygame.image.load("Imagenes/boss.png")
         self.rect = self.image.get_rect()
         self.rect.center = posicion
         self.velocidad = velocidad
@@ -107,15 +123,31 @@ class Picolo (pygame.sprite.Sprite):
 
         #colision de picolo con la bala
         grupo_sprites_kame = args[2]
-        vidas = args[6]
+        vidas_picolo = args[6]
         running = args[7]
         colision = pygame.sprite.spritecollideany(self,grupo_sprites_kame,pygame.sprite.collide_mask)
         if colision:
             colision.kill()
-            vidas.restarvida()
-            if vidas.getvidas() <= 0 :
+            vidas_picolo.restarvida_picolo()
+            if vidas_picolo.getvidas_picolo() <= 0 :
                 running[0] = False
-                
+
+class Enemigos(pygame.sprite.Sprite):
+    def __init__(self,posicion) -> None:
+        super().__init__()
+        self.image = pygame.image.load("Imagenes/picolo.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = posicion
+
+    def update(self, *args: any, **kwargs: any):
+        pantalla = pygame.display.get_surface()
+        self.rect.x -=1
+        self.rect.x = max(0, self.rect.x)
+        self.rect.x = min(pantalla.get_width() - self.image.get_width(), self.rect.x)
+        if (self.rect.x == 0):
+            self.kill()
+
+
 class Esferas(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
@@ -152,12 +184,18 @@ class Fondo(pygame.sprite.Sprite):
 class Puntos ():
     def __init__(self) -> None:
         self.puntuacion = 0
-        self.vidas = 1 
-        
-    def getvidas (self) :
-        return self.vidas
-    def restarvida(self):
-        self.vidas-=1
+        self.vidas_picolo = 1 
+        self.vidas_jugador = 1
+
+    def getvidas_picolo (self) :
+        return self.vidas_picolo
+    def restarvida_picolo(self):
+        self.vidas_picolo-=1
+    
+    def getvidas_jugador(self):
+        return self.vidas_jugador
+    def restarvidas_jugador(self):
+        self.vidas_jugador-=1
 
     def getpuntuacion (self):
         return self.puntuacion
