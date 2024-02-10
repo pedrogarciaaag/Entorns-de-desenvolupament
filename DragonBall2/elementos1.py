@@ -85,11 +85,18 @@ class Jugador (pygame.sprite.Sprite):
             if vidas_jugador.getvidas_picolo() == 0 :
                 running[0] = False
         
-
+        grupo_sprites_rayo = args[10]
+        rayo_colision = pygame.sprite.spritecollideany(self,grupo_sprites_rayo,pygame.sprite.collide_mask)
+        if rayo_colision :
+            rayo_colision.kill()
+            vidas_jugador.restarvidas_jugador()
+            if vidas_jugador.getvidas_picolo() == 0 :
+                running[0] = False
+        
 class Kamehameha(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
-        self.image = pygame.image.load("Imagenes/kame1.png")
+        self.image = pygame.image.load("Imagenes/kame.png")
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = posicion
@@ -112,6 +119,7 @@ class Picolo (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = posicion
         self.velocidad = velocidad
+        self.ultimo_disparo = 0
 
     def update(self, *args: any, **kwargs: any):
         pantalla = pygame.display.get_surface()
@@ -132,6 +140,32 @@ class Picolo (pygame.sprite.Sprite):
             if vidas_picolo.getvidas_picolo() <= 0 :
                 running[0] = False
 
+        grupo_sprites_todos = args[1]
+        grupo_sprites_rayos = args[10]
+        momento_actual = pygame.time.get_ticks()
+        if momento_actual > self.ultimo_disparo + 1000:  
+            self.disparar(grupo_sprites_todos, grupo_sprites_rayos) 
+            self.ultimo_disparo = momento_actual
+        
+    #funcion para que jugador dispare rayo
+    def disparar(self, grupo_sprites_todos, grupo_sprites_balas_picolo):
+        bala = Rayo((self.rect.x + self.image.get_width() / 2, self.rect.y + self.image.get_width() / 2))
+        grupo_sprites_balas_picolo.add(bala)
+        grupo_sprites_todos.add(bala)
+
+class Rayo(pygame.sprite.Sprite):
+    def __init__(self, posicion) -> None:
+        super().__init__()
+        self.image = pygame.image.load("Imagenes/rayo.png")
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        self.rect.center = posicion
+
+    def update(self, *args: any, **kwargs: any) -> None:
+        self.rect.x -=5
+        if self.rect.bottom < 0:
+            self.kill()
+
 class Enemigos(pygame.sprite.Sprite):
     def __init__(self,posicion) -> None:
         super().__init__()
@@ -144,6 +178,8 @@ class Enemigos(pygame.sprite.Sprite):
         self.rect.x -=1
         self.rect.x = max(0, self.rect.x)
         self.rect.x = min(pantalla.get_width() - self.image.get_width(), self.rect.x)
+        self.rect.y = max(0, self.rect.y)
+        self.rect.y = min(pantalla.get_height() - self.image.get_height(), self.rect.y)
         if (self.rect.x == 0):
             self.kill()
 
