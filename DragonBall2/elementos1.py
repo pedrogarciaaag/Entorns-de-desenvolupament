@@ -1,8 +1,8 @@
-from typing import Any
 import pygame
+import time
 
 class Jugador (pygame.sprite.Sprite):
-    def __init__(self,posicion):
+    def __init__(self,posicion,velocidad):
         super().__init__()
         #creacion de array de las imagenes
         self.imagenes = [
@@ -18,6 +18,10 @@ class Jugador (pygame.sprite.Sprite):
         self.rect.topleft = posicion
         self.ultimo_disparo = 0
         self.puntuacion = 0
+        self.velocidad = velocidad
+        self.velocidad_original = velocidad
+        self.tiempo_esfera = 0
+        self.barravida_goku = Barravida_goku((18, 14), 3)  # Asegúrate de usar la imagen correcta aquí
 
     #funcion para que jugador dispare kame
     def disparar(self, grupo_sprites_todos, grupo_sprites_kame):
@@ -46,21 +50,21 @@ class Jugador (pygame.sprite.Sprite):
 
         if teclas[pygame.K_UP]:
             self.image = self.imagenes[1]
-            self.rect.y -= 2
+            self.rect.y -= self.velocidad
             self.rect.y = max(0, self.rect.y)
         elif teclas[pygame.K_DOWN]:
             self.image = self.imagenes[2]
-            self.rect.y += 2
+            self.rect.y += self.velocidad
             pantalla = pygame.display.get_surface()
             self.rect.y = min(pantalla.get_height() - self.image.get_height(), self.rect.y)
 
         if teclas[pygame.K_LEFT]:
             self.image = self.imagenes[4]
-            self.rect.x -= 2
+            self.rect.x -= self.velocidad
             self.rect.x = max(0,self.rect.x)
         elif teclas[pygame.K_RIGHT]:
             self.image = self.imagenes[3]
-            self.rect.x += 2
+            self.rect.x += self.velocidad
             pantalla = pygame.display.get_surface()
             self.rect.x = min(pantalla.get_width ()- self.image.get_width(),self.rect.x)
         
@@ -70,18 +74,26 @@ class Jugador (pygame.sprite.Sprite):
 
         if not any(teclas):
             self.image = self.imagenes[0]
+        
+        # Verificar si han pasado 5 segundos desde que se recogió la esfera
+        if self.tiempo_esfera and time.time() - self.tiempo_esfera > 5:
+            self.velocidad = self.velocidad_original
+            self.tiempo_esfera = 0
 
         #colisiones esferas
         esfera_colison  = pygame.sprite.spritecollideany(self,grupo_sprites_esfera,pygame.sprite.collide_mask)
         if esfera_colison : 
             esfera_colison.kill()
             puntuacion.sumarpuntuacion()
+            self.velocidad *= 2  # Duplicar la velocidad
+            self.tiempo_esfera = time.time()  # Registrar el momento en que se recogió la esfera
 
         grupo_sprites_enemigos = args[8]
         enemigos_colison= pygame.sprite.spritecollideany(self,grupo_sprites_enemigos,pygame.sprite.collide_mask)
         if enemigos_colison:
             enemigos_colison.kill()
             vidas_jugador.restarvidas_jugador()
+            self.actualizar_barravida_goku(vidas_jugador.getvidas_jugador())  # Actualiza la barra de vida
             if vidas_jugador.getvidas_picolo() == 0 :
                 running[0] = False
         
@@ -90,8 +102,13 @@ class Jugador (pygame.sprite.Sprite):
         if rayo_colision :
             rayo_colision.kill()
             vidas_jugador.restarvidas_jugador()
+            self.actualizar_barravida_goku(vidas_jugador.getvidas_jugador())  # Actualiza la barra de vida
             if vidas_jugador.getvidas_picolo() == 0 :
                 running[0] = False
+
+        
+    def actualizar_barravida_goku(self, vidas):
+        self.barravida_goku.update(vidas)
         
 class Kamehameha(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
@@ -120,6 +137,7 @@ class Picolo (pygame.sprite.Sprite):
         self.rect.center = posicion
         self.velocidad = velocidad
         self.ultimo_disparo = 0
+        self.barravida_picolo = Barravida_picolo((954,14), 10)  # Asegúrate de usar la imagen correcta aquí
 
     def update(self, *args: any, **kwargs: any):
         pantalla = pygame.display.get_surface()
@@ -137,6 +155,7 @@ class Picolo (pygame.sprite.Sprite):
         if colision:
             colision.kill()
             vidas_picolo.restarvida_picolo()
+            self.actualizar_barravida_picolo(vidas_picolo.getvidas_picolo())
             if vidas_picolo.getvidas_picolo() <= 0 :
                 running[0] = False
 
@@ -147,6 +166,8 @@ class Picolo (pygame.sprite.Sprite):
             self.disparar(grupo_sprites_todos, grupo_sprites_rayos) 
             self.ultimo_disparo = momento_actual
         
+    def actualizar_barravida_picolo(self, vidas):
+        self.barravida_picolo.update(vidas)
     #funcion para que jugador dispare rayo
     def disparar(self, grupo_sprites_todos, grupo_sprites_balas_picolo):
         bala = Rayo((self.rect.x + self.image.get_width() / 2, self.rect.y + self.image.get_width() / 2))
@@ -220,8 +241,8 @@ class Fondo(pygame.sprite.Sprite):
 class Puntos ():
     def __init__(self) -> None:
         self.puntuacion = 0
-        self.vidas_picolo = 1 
-        self.vidas_jugador = 1
+        self.vidas_picolo = 10 
+        self.vidas_jugador = 3
 
     def getvidas_picolo (self) :
         return self.vidas_picolo
@@ -237,3 +258,31 @@ class Puntos ():
         return self.puntuacion
     def sumarpuntuacion(self):
         self.puntuacion +=1
+
+class Barravida_goku(pygame.sprite.Sprite):
+    def __init__(self, posicion, vida_maxima):
+        super().__init__()
+        self.image = pygame.image.load("Imagenes/barravidagoku.png")
+        self.rect = self.image.get_rect()
+        self.rect.topleft = posicion
+        self.vida_maxima = vida_maxima
+        self.vida_actual = vida_maxima
+
+    def update(self, vida):
+        porcentaje_vida = vida / self.vida_maxima
+        self.image = pygame.transform.scale(self.image, (int(self.rect.width * porcentaje_vida), self.rect.height))
+        self.vida_actual = vida
+
+class Barravida_picolo(pygame.sprite.Sprite):
+    def __init__(self, posicion, vida_maxima):
+        super().__init__()
+        self.image = pygame.image.load("Imagenes/barravidapicolo.png")
+        self.rect = self.image.get_rect()
+        self.rect.topleft = posicion
+        self.vida_maxima = vida_maxima
+        self.vida_actual = vida_maxima
+
+    def update(self, vida):
+        porcentaje_vida = vida / self.vida_maxima
+        self.image = pygame.transform.scale(self.image, (int(self.rect.width * porcentaje_vida), self.rect.height))
+        self.vida_actual = vida

@@ -40,7 +40,7 @@ def start_the_game ():
 
     #Cargamos personaje y su posicion
     posicion=(100 ,350)
-    personaje = elementos1.Jugador(posicion)
+    personaje = elementos1.Jugador(posicion,2)
 
     #Cargamos el fondo
     fondo = elementos1.Fondo()
@@ -115,22 +115,29 @@ def start_the_game ():
 
         #pintamos todo los sprites en la pantalla
         grupo_sprites_todos.draw(pantalla)
+
+
         if pausado:
             texto = font.render("PAUSADO",True,"White")
             pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
             valor_puntuacion = font.render("Esferas del dragon " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
-            pantalla.blit(valor_puntuacion, (250, 70))
+            pantalla.blit(valor_puntuacion, (0, 50))
+            cuadrovida_goku = pygame.image.load("Imagenes/cuadrovidagoku.png")
+            pantalla.blit(cuadrovida_goku,(0,10))
+            pantalla.blit(personaje.barravida_goku.image, personaje.barravida_goku.rect)
+            cuadrovida_picolo = pygame.image.load("Imagenes/cuadrovidapicolo.png")
+            pantalla.blit(cuadrovida_picolo,(950,10))
+            pantalla.blit(picolo.barravida_picolo.image, picolo.barravida_picolo.rect)
 
-        # if not pausado : 
-        #      valor_puntuacion = font.render("Esferas del dragon " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
-        #      pantalla.blit(valor_puntuacion, (250, 70))
-
-        # #icono de goku arriba izquierda
-        # goku_icono = pygame.image.load("Imagenes/goku_icono.png")
-        # pantalla.blit(goku_icono, (0, 0))
-        # #icono de picolo arriba derecha
-        # picolo_icono  = pygame.image.load("Imagenes/picolo_icono.png")
-        # pantalla.blit(picolo_icono,(1280,0))
+        if not pausado : 
+            valor_puntuacion = font.render("Esferas del dragon " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
+            pantalla.blit(valor_puntuacion, (0, 50))
+            cuadrovida_goku = pygame.image.load("Imagenes/cuadrovidagoku.png")
+            pantalla.blit(cuadrovida_goku,(0,10))
+            pantalla.blit(personaje.barravida_goku.image, personaje.barravida_goku.rect)
+            cuadrovida_picolo = pygame.image.load("Imagenes/cuadrovidapicolo.png")
+            pantalla.blit(cuadrovida_picolo,(950,10))
+            pantalla.blit(picolo.barravida_picolo.image, picolo.barravida_picolo.rect)
 
         #si las vidas de picolo llegan a 0 el jugador gana 
         if vidas_picolo.getvidas_picolo() == 0:
