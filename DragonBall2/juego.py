@@ -17,19 +17,22 @@ frecuencia_creacion_esferas = 10000
 ultimo_enemigo_creado = 0
 frecuencia_creacion_enemigo = 2000
 
-#velocidad para picolo
+#iniciamos la variable velocidad para picolo
 velocidad = 3
+
 #creamos un reloj 
 reloj = pygame.time.Clock()
 
-#Fuente letras 
+#fuente letras 
 font= pygame.font.Font(pygame_menu.font.FONT_8BIT,20)
 
+#crecion de la funcion dificultad para que en el menu se pueda elegir la dificultad del juego
 def set_difficulty(value, difficulty):
+    #cargamos los enemigos que se crearan mediante la dificultad
     global frecuencia_creacion_enemigo
-    global velocidad
     frecuencia_creacion_enemigo = difficulty
 
+#funcion para inciar el juego con el menu
 def start_the_game ():
     running = [True]
     global reloj
@@ -56,21 +59,29 @@ def start_the_game ():
     grupo_sprites_esfera = pygame.sprite.Group()
     #creamos grupo de sprites de picolo
     grupo_sprites_picolo = pygame.sprite.Group()
-
+    #grupo sprites de los rayos que dispara picolo
     grupo_sprites_rayos = pygame.sprite.Group()
     #creamos grupo sprites enemigos
     grupo_sprites_enemigos = pygame.sprite.Group()
 
+    #añadimos el fondo al grupo sprites todos
     grupo_sprites_todos.add(fondo)
+    #añadimos el personaje al grupo sprites todos
     grupo_sprites_todos.add(personaje)
+    #añadimos picolo al grupo sprites todos
     grupo_sprites_todos.add(picolo)
 
+    #añadimos el fondo al grupo sprites todos
     grupo_sprites_picolo.add(picolo)
 
+    #creacion de la variable pausado con un booleano para alternar el juego entre pausado y no pausado
     pausado = False
 
+    #cargmos la puntuacion de las esfreras con la clase Puntos de elementos1
     puntuacion_esferas = elementos1.Puntos()
+    #cargmos las vidas de picolo con la clase Puntos de elementos1
     vidas_picolo = elementos1.Puntos()
+    #cargmos las vidas del jugador con la clase Puntos de elementos1
     vidas_jugador = elementos1.Puntos()
 
     #bucle princiapl
@@ -83,11 +94,14 @@ def start_the_game ():
 
         #capturamos teclas
         teclas = pygame.key.get_pressed()
+        #la tecla ESC hace que el juego se pare y vuelva al menu
         if teclas[pygame.K_ESCAPE]:
           running[0] = False
+        #la tecla b hace que el juego se pause
         if teclas[pygame.K_b]:
             pausado = not pausado
 
+        #cuando no esta pausado realiza la funcion principal del juego
         if not pausado:
             #update funcion principal
             grupo_sprites_todos.update(teclas, grupo_sprites_todos, grupo_sprites_kame,grupo_sprites_esfera,grupo_sprites_picolo,puntuacion_esferas,vidas_picolo,running,grupo_sprites_enemigos,vidas_jugador,grupo_sprites_rayos)
@@ -116,7 +130,7 @@ def start_the_game ():
         #pintamos todo los sprites en la pantalla
         grupo_sprites_todos.draw(pantalla)
 
-
+        #cuando esta pausado pintamos toda la informacion de las esfreas y barra de vidas, y un texto diciendo que esta pausado
         if pausado:
             texto = font.render("PAUSADO",True,"White")
             pantalla.blit(texto,(pantalla.get_width()//2 - texto.get_width()//2, pantalla.get_height()//2 - texto.get_height()//2))
@@ -129,6 +143,7 @@ def start_the_game ():
             pantalla.blit(cuadrovida_picolo,(950,10))
             pantalla.blit(picolo.barravida_picolo.image, picolo.barravida_picolo.rect)
 
+        #cuando no esta pausado pintamos toda la informacion de las esfreas y barra de vidas
         if not pausado : 
             valor_puntuacion = font.render("Esferas del dragon " +str(puntuacion_esferas.getpuntuacion()),True,"Orange")
             pantalla.blit(valor_puntuacion, (0, 50))
@@ -145,7 +160,8 @@ def start_the_game ():
             pantalla.blit(hasganado,(pantalla.get_width()//2 - hasganado.get_width()//2, pantalla.get_height()//2 - hasganado.get_height()//2))
             pygame.display.flip()
             pygame.time.wait(3000)
-
+        
+        #si las vidas del jugador llegan a 0 el jugador pierde 
         if vidas_jugador.getvidas_jugador() == 0:
             hasperdido = pygame.image.load("Imagenes/hasperdido.png")
             pantalla.blit(hasperdido,(pantalla.get_width()//2 - hasperdido.get_width()//2, pantalla.get_height()//2 - hasperdido.get_height()//2))
@@ -155,13 +171,13 @@ def start_the_game ():
 
         pygame.display.flip()
 
-#Imagen fondo menu
+#imagen fondo menu
 myimage = pygame_menu.baseimage.BaseImage(
     image_path="Imagenes/menu.png",
     drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL
 )
 
-# Tema del menu
+#tema del menu
 tema = pygame_menu.themes.Theme(
     background_color=myimage, 
     title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_SIMPLE,
@@ -176,9 +192,11 @@ tema = pygame_menu.themes.Theme(
 )
 #creacion del menu
 menu = pygame_menu.Menu('DragonBall Game', 1366,768, theme=tema)
-
+#podemos seleccionar la dificultad del juego que queramos
 menu.add.selector('Dificultad ', [('Facil', float('inf') ),('Dificil', 3000)], onchange=set_difficulty)
+#boton para inciar el juego
 menu.add.button('Jugar', start_the_game)
+#boton para salir del juego
 menu.add.button('Salir', pygame_menu.events.EXIT)
 
 menu.mainloop(pantalla)
