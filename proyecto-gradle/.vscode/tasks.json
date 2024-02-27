@@ -1,0 +1,95 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "gradle",
+			"id": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradleapp:buildapp",
+			"script": "app:build",
+			"description": "Assembles and tests this project.",
+			"group": "build",
+			"project": "app",
+			"buildFile": "C:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle\\app\\build.gradle",
+			"rootProject": "proyecto-gradle",
+			"projectFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"workspaceFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: app:build"
+		},
+		{
+			"type": "gradle",
+			"id": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradleapp:cleanapp",
+			"script": "app:clean",
+			"description": "Deletes the build directory.",
+			"group": "build",
+			"project": "app",
+			"buildFile": "C:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle\\app\\build.gradle",
+			"rootProject": "proyecto-gradle",
+			"projectFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"workspaceFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: app:clean"
+		},
+		{
+			"type": "gradle",
+			"id": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradleapp:runapp",
+			"script": "app:run",
+			"description": "Runs this project as a JVM application",
+			"group": "application",
+			"project": "app",
+			"buildFile": "C:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle\\app\\build.gradle",
+			"rootProject": "proyecto-gradle",
+			"projectFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"workspaceFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: app:run"
+		},
+		{
+			"type": "gradle",
+			"id": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradleapp:jarapp",
+			"script": "app:jar",
+			"description": "Assembles a jar archive containing the main classes.",
+			"group": "build",
+			"project": "app",
+			"buildFile": "C:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle\\app\\build.gradle",
+			"rootProject": "proyecto-gradle",
+			"projectFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"workspaceFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: app:jar"
+		},
+		{
+			"type": "gradle",
+			"id": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradleapp:testapp",
+			"script": "app:test",
+			"description": "Runs the test suite.",
+			"group": "verification",
+			"project": "app",
+			"buildFile": "C:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle\\app\\build.gradle",
+			"rootProject": "proyecto-gradle",
+			"projectFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"workspaceFolder": "c:\\Users\\alumne-DAM\\Peter\\Entorns-de-desenvolupament\\proyecto-gradle",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: app:test"
+		}
+	]
+}

@@ -1,0 +1,5 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.home": "java.jdt.ls.java.java.home",
+    "java.configuration.updateBuildConfiguration": "interactive"
+}
