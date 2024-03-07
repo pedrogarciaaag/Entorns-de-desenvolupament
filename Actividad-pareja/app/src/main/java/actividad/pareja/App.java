@@ -5,7 +5,7 @@ package actividad.pareja;
 
 public class App {
     public String getGreeting() {
-        return "Hello World!";
+        return "Hello Wodadadrld!";
     }
 
     public static void main(String[] args) {
