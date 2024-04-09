@@ -10,3 +10,5 @@ Los controles del juego son muy sencillos. Para poder moverte utiliza las flecha
 Cada cierto tiempo te aparecen Esferas del dragón, que al recogerlas, obtendrás más velocidad durante unos segundos! De esta manera podrás moverte más rápido por el mapa y poder esquivar los ataques que te lancen.
 
 ## Imágenes
+<img src="Imagenes/db1.png">
+<img src="Imagenes/db2.png">
